@@ -1,0 +1,19 @@
+$Groups = Get-ADGroup -Filter *
+
+
+foreach ($Group in $Groups)
+{
+    
+    $DisabledUsers = Get-ADGroupMember -Identity $Group -Recursive | Where-Object {$_.Enabled -eq $false}
+
+    foreach ($User in $DisabledUsers)
+    {
+       
+        if ($Group.Name -eq "Domain Users")
+        {
+            continue
+        }
+
+        Remove-ADGroupMember -Identity $Group -Members $User -Confirm:$false
+    }
+}
